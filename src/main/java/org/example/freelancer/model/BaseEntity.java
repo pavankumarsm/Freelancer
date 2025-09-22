@@ -1,7 +1,7 @@
 package org.example.freelancer.model;
 
 import jakarta.persistence.*;
-import org.antlr.v4.runtime.misc.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 
