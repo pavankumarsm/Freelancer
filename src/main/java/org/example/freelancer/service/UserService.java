@@ -1,7 +1,12 @@
 package org.example.freelancer.service;
 
-import org.springframework.stereotype.Service;
+import org.example.freelancer.dto.UserProfileDTO;
+import org.example.freelancer.dto.UserSignupDTO;
+import org.example.freelancer.model.User;
 
-@Service
 public interface UserService {
+    User createAdmin(User user, User adminUser);
+    User registerUser(UserSignupDTO signupDTO);    // minimal signup
+    User updateProfile(Long userId, UserProfileDTO profileDTO);
+    User findByEmail(String email);
 }
