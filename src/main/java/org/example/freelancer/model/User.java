@@ -9,6 +9,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.*;
+import lombok.Data;
+import org.example.freelancer.constant.Language;
+import org.example.freelancer.constant.Role;
+
+import java.util.HashSet;
+import java.util.Set;
+
 
 import java.math.BigDecimal;
 
@@ -16,6 +24,7 @@ import java.math.BigDecimal;
  * Represents a user in the freelancing platform.
  */
 @Entity
+
 @Table(name = "users",
         indexes = @Index(columnList = "email", unique = true))
 @Data
@@ -69,3 +78,4 @@ public class User extends BaseEntity {
     @Column(name = "is_active")
     private boolean isActive = true;
 }
+
