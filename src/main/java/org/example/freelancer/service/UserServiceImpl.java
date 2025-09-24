@@ -2,21 +2,26 @@ package org.example.freelancer.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.freelancer.constant.Role;
-import org.example.freelancer.dto.UserProfileDTO;
+import org.example.freelancer.dto.ClientProfileDTO;
+import org.example.freelancer.dto.FreelancerProfileDTO;
 import org.example.freelancer.dto.UserSignupDTO;
 import org.example.freelancer.exception.UnauthorizedException;
+import org.example.freelancer.model.Client;
+import org.example.freelancer.model.Freelancer;
 import org.example.freelancer.model.User;
+import org.example.freelancer.repository.ClientRepository;
+import org.example.freelancer.repository.FreelancerRepository;
 import org.example.freelancer.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.HashSet;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final FreelancerRepository freelancerRepository;
+    private final ClientRepository clientRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -26,8 +31,6 @@ public class UserServiceImpl implements UserService {
         }
         user.setRole(Role.ADMIN);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRating(0.0);
-        user.setLanguages(new HashSet<>());
         return userRepository.save(user);
     }
 
@@ -37,36 +40,49 @@ public class UserServiceImpl implements UserService {
             throw new UnauthorizedException("Cannot register as ADMIN directly");
         }
 
-        User user = new User();
+        User user;
+        if (signupDTO.getRole() == Role.FREELANCER) {
+            user = new Freelancer();
+        } else {
+            user = new Client();
+        }
+
         user.setName(signupDTO.getName());
         user.setEmail(signupDTO.getEmail());
         user.setPassword(passwordEncoder.encode(signupDTO.getPassword()));
         user.setRole(signupDTO.getRole());
-        user.setRating(0.0);
-        user.setLanguages(new HashSet<>());
-
         return userRepository.save(user);
     }
 
     @Override
-    public User updateProfile(Long userId, UserProfileDTO profileDTO) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public User updateProfile(Long userId, FreelancerProfileDTO profileDTO) {
+        Freelancer freelancer = freelancerRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Freelancer not found"));
 
-        if (profileDTO.getProfileImageUrl() != null) user.setProfileImageUrl(profileDTO.getProfileImageUrl());
-        if (profileDTO.getPhoneNumber() != null) user.setPhoneNumber(profileDTO.getPhoneNumber());
-        if (profileDTO.getLocation() != null) user.setLocation(profileDTO.getLocation());
-        if (profileDTO.getBio() != null) user.setBio(profileDTO.getBio());
-        if (profileDTO.getSkills() != null) user.setSkills(profileDTO.getSkills());
-        if (profileDTO.getYearsOfExperience() != null) user.setYearsOfExperience(profileDTO.getYearsOfExperience());
-        if (profileDTO.getWebsiteUrl() != null) user.setWebsiteUrl(profileDTO.getWebsiteUrl());
-        if (profileDTO.getLinkedInUrl() != null) user.setLinkedInUrl(profileDTO.getLinkedInUrl());
-        if (profileDTO.getGithubUrl() != null) user.setGithubUrl(profileDTO.getGithubUrl());
-        if (profileDTO.getLanguages() != null && !profileDTO.getLanguages().isEmpty())
-            user.setLanguages(profileDTO.getLanguages());
+        if (profileDTO.getPhone() != null) freelancer.setPhone(profileDTO.getPhone());
+        if (profileDTO.getAddress() != null) freelancer.setAddress(profileDTO.getAddress());
+        if (profileDTO.getCity() != null) freelancer.setCity(profileDTO.getCity());
+        if (profileDTO.getProfilePicture() != null) freelancer.setProfilePicture(profileDTO.getProfilePicture());
+        if (profileDTO.getResume() != null) freelancer.setResume(profileDTO.getResume());
+        if (profileDTO.getSkills() != null) freelancer.setSkills(profileDTO.getSkills());
+        if (profileDTO.getBio() != null) freelancer.setBio(profileDTO.getBio());
+        if (profileDTO.getExperience() != null) freelancer.setExperience(profileDTO.getExperience());
 
-        return userRepository.save(user);
+        return freelancerRepository.save(freelancer);
     }
+
+    @Override
+    public User updateClientProfile(Long clientId, ClientProfileDTO profileDTO) {
+        Client client = clientRepository.findById(clientId)
+                .orElseThrow(() -> new RuntimeException("Client not found"));
+
+        if (profileDTO.getCompanyName() != null) client.setCompanyName(profileDTO.getCompanyName());
+        if (profileDTO.getIndustry() != null) client.setIndustry(profileDTO.getIndustry());
+        if (profileDTO.getAddress() != null) client.setAddress(profileDTO.getAddress());
+
+        return clientRepository.save(client);
+    }
+
     @Override
     public User findByEmail(String email) {
         return userRepository.findByEmail(email)
