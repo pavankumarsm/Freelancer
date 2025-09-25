@@ -24,5 +24,14 @@ public class ClientServiceImpl implements ClientService {
 
         return clientRepository.save(client);
     }
+    @Override
+    public User deactivateClient(Long clientId) {
+        Client client = clientRepository.findById(clientId)
+                .orElseThrow(() -> new RuntimeException("Client not found"));
+
+        client.setActive(false);
+        return clientRepository.save(client);
+    }
+
 }
 

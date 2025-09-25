@@ -5,4 +5,5 @@ import org.example.freelancer.model.User;
 
 public interface ClientService {
     User updateClientProfile(Long clientId, ClientProfileDTO profileDTO);
+    User deactivateClient(Long clientId);
 }
