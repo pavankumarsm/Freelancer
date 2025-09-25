@@ -22,7 +22,7 @@ public class ClientController {
                                                     @RequestBody @Valid ClientProfileDTO profileDTO) {
         return ResponseEntity.ok(clientService.updateClientProfile(clientId, profileDTO));
     }
-    @DeleteMapping("/{clientId}/deactivate")
+    @PutMapping("/{clientId}/deactivate")
     public ResponseEntity<String> deactivateClient(@PathVariable Long clientId) {
         clientService.deactivateClient(clientId);
         return ResponseEntity.ok("Client account deactivated successfully");
