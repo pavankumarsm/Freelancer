@@ -29,4 +29,13 @@ public class FreelancerServiceImpl implements FreelancerService {
 
         return freelancerRepository.save(freelancer);
     }
+
+    @Override
+    public void deactivateAccount(Long freelancerId) {
+        Freelancer freelancer = freelancerRepository.findById(freelancerId)
+                .orElseThrow(() -> new RuntimeException("Freelancer not found with id: " + freelancerId));
+
+        freelancer.setActive(false);  // soft delete
+        freelancerRepository.save(freelancer);
+    }
 }

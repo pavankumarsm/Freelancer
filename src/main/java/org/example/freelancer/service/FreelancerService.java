@@ -5,4 +5,5 @@ import org.example.freelancer.model.User;
 
 public interface FreelancerService {
     User updateProfile(Long freelancerId, FreelancerProfileDTO profileDTO);
+    void deactivateAccount(Long freelancerId);
 }

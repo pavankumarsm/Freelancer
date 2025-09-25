@@ -22,4 +22,16 @@ public class FreelancerController {
                                               @RequestBody @Valid FreelancerProfileDTO profileDTO) {
         return ResponseEntity.ok(freelancerService.updateProfile(freelancerId, profileDTO));
     }
+    @PutMapping("/{freelancerId}/deactivate")
+    public ResponseEntity<String> deactivateAccount(@PathVariable Long freelancerId) {
+        freelancerService.deactivateAccount(freelancerId);
+        return ResponseEntity.ok("Freelancer account deactivated successfully.");
+    }
 }
+
+/*
+You already have isActive flag in User.
+When a freelancer deactivates → isActive = false.
+If we don’t add any checks in login flow, Spring Security will still let them log in (since username & password match).
+x That means deactivated users can still log in → not desired.
+ */
