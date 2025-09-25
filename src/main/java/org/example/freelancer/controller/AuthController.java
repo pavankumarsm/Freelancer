@@ -24,3 +24,9 @@ public class AuthController {
 
     // TODO: add login, refresh-token, logout later
 }
+/*
+F: Login & Logout (/login, /logout) – secure session handling.
+F: Forgot Password / Reset Password – OTP or email-based reset.
+F: Email Verification – send verification link after signup.
+F: 2FA (Two-Factor Authentication) – optional security feature.
+ */

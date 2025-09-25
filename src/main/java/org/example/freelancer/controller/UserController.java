@@ -21,3 +21,8 @@ public class UserController {
         return ResponseEntity.ok(userService.createAdmin(user, currentUser));
     }
 }
+/*
+F: Update Password (/change-password).
+F: List All Users (Admin only).
+F: Deactivate / Reactivate User (Admin only).
+ */

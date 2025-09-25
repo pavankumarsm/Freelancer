@@ -28,3 +28,6 @@ public class ClientController {
         return ResponseEntity.ok("Client account deactivated successfully");
     }
 }
+/*
+F: View Profile (company details visible to freelancers).
+ */

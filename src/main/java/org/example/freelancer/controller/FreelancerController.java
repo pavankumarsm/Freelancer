@@ -30,6 +30,8 @@ public class FreelancerController {
 }
 
 /*
+1. F: View Profile (/profile/{id}) – others can view freelancer details.
+2. config:
 You already have isActive flag in User.
 When a freelancer deactivates → isActive = false.
 If we don’t add any checks in login flow, Spring Security will still let them log in (since username & password match).
