@@ -36,4 +36,11 @@ public class User extends BaseEntity {
 
     @Column(name = "is_active")
     private boolean isActive = true;
+
+    private String verificationToken;
+    private String resetToken;
+    @Column(name = "two_factor_enabled")
+    private boolean twoFactorEnabled = false;
+    private String twoFactorOtp;
+    private Long twoFactorExpiry;
 }
