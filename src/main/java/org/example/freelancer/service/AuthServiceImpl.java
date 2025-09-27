@@ -7,7 +7,7 @@ import org.example.freelancer.exception.UnauthorizedException;
 import org.example.freelancer.model.Client;
 import org.example.freelancer.model.Freelancer;
 import org.example.freelancer.model.User;
-import org.example.freelancer.repository.UserRepository;
+import org.example.freelancer.repository.AdminRepository;
 import org.example.freelancer.util.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,7 +20,7 @@ import java.util.Random;
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
-    private final UserRepository userRepository;
+    private final AdminRepository adminRepository;
     private final PasswordEncoder passwordEncoder;
     @Autowired
     private JwtUtils jwtUtils;
@@ -34,7 +34,7 @@ public class AuthServiceImpl implements AuthService {
         }
 
         // Check if user exists
-        Optional<User> existingUserOpt = userRepository.findByEmail(signupDTO.getEmail());
+        Optional<User> existingUserOpt = adminRepository.findByEmail(signupDTO.getEmail());
         if (existingUserOpt.isPresent()) {
             User existingUser = existingUserOpt.get();
             if (!existingUser.isActive()) {
@@ -42,7 +42,7 @@ public class AuthServiceImpl implements AuthService {
                 existingUser.setName(signupDTO.getName());
                 existingUser.setPassword(passwordEncoder.encode(signupDTO.getPassword()));
                 existingUser.setRole(signupDTO.getRole());
-                return userRepository.save(existingUser);
+                return adminRepository.save(existingUser);
             } else {
                 throw new RuntimeException("Email already registered. Please login.");
             }
@@ -61,7 +61,7 @@ public class AuthServiceImpl implements AuthService {
         user.setVerified(false);
         user.setActive(true);
 
-        User savedUser = userRepository.save(user);
+        User savedUser = adminRepository.save(user);
 
         // Send verification email
         emailService.sendEmail(
@@ -76,7 +76,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public LoginResponseDTO login(LoginRequestDTO loginDTO) {
-        User user = userRepository.findByEmail(loginDTO.getEmail())
+        User user = adminRepository.findByEmail(loginDTO.getEmail())
                 .orElseThrow(() -> new UnauthorizedException("Invalid credentials"));
 
         if (!passwordEncoder.matches(loginDTO.getPassword(), user.getPassword())) {
@@ -93,7 +93,7 @@ public class AuthServiceImpl implements AuthService {
 
             user.setTwoFactorOtp(otp);
             user.setTwoFactorExpiry(System.currentTimeMillis() + (5 * 60 * 1000)); // 5 minutes expiry
-            userRepository.save(user);
+            adminRepository.save(user);
 
             // Send email
             emailService.sendEmail(
@@ -120,7 +120,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public void logout(String token) {
         String email = jwtUtils.getEmailFromToken(token.replace("Bearer ", ""));
-        userRepository.findByEmail(email).ifPresent(user -> {
+        adminRepository.findByEmail(email).ifPresent(user -> {
             // If you maintain a blacklist, add token there
         });
     }
@@ -131,7 +131,7 @@ public class AuthServiceImpl implements AuthService {
             throw new UnauthorizedException("Invalid refresh token");
         }
         String email = jwtUtils.getEmailFromToken(refreshToken);
-        User user = userRepository.findByEmail(email)
+        User user = adminRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         return jwtUtils.generateToken(user.getEmail());
@@ -139,12 +139,12 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void initiatePasswordReset(String email) {
-        User user = userRepository.findByEmail(email)
+        User user = adminRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         String resetToken = java.util.UUID.randomUUID().toString();
         user.setResetToken(resetToken);
-        userRepository.save(user);
+        adminRepository.save(user);
 
         emailService.sendEmail(
                 user.getEmail(),
@@ -155,7 +155,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void resetPassword(ResetPasswordDTO dto) {
-        User user = userRepository.findByEmail(dto.getEmail())
+        User user = adminRepository.findByEmail(dto.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         if (!dto.getToken().equals(user.getResetToken())) {
@@ -164,12 +164,12 @@ public class AuthServiceImpl implements AuthService {
 
         user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
         user.setResetToken(null);
-        userRepository.save(user);
+        adminRepository.save(user);
     }
 
     @Override
     public void verifyEmail(EmailVerificationDTO dto) {
-        User user = userRepository.findByEmail(dto.getEmail())
+        User user = adminRepository.findByEmail(dto.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         if (!dto.getVerificationToken().equals(user.getVerificationToken())) {
@@ -178,12 +178,12 @@ public class AuthServiceImpl implements AuthService {
 
         user.setVerified(true);
         user.setVerificationToken(null); // clear token after verification
-        userRepository.save(user);
+        adminRepository.save(user);
     }
 
     @Override
     public void enableTwoFactor(String userId) {
-        User user = userRepository.findById(Long.valueOf(userId))
+        User user = adminRepository.findById(Long.valueOf(userId))
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         if (!user.isVerified()) {
@@ -191,7 +191,7 @@ public class AuthServiceImpl implements AuthService {
         }
 
         user.setTwoFactorEnabled(true);
-        userRepository.save(user);
+        adminRepository.save(user);
 
         // send confirmation email
         emailService.sendEmail(
@@ -204,7 +204,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void verifyTwoFactor(TwoFactorDTO dto) {
-        User user = userRepository.findByEmail(dto.getEmail())
+        User user = adminRepository.findByEmail(dto.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         if (!user.isTwoFactorEnabled()) {
@@ -222,7 +222,7 @@ public class AuthServiceImpl implements AuthService {
         // OTP verified → clear OTP
         user.setTwoFactorOtp(null);
         user.setTwoFactorExpiry(null);
-        userRepository.save(user);
+        adminRepository.save(user);
 
         // Issue JWT tokens after successful 2FA
         String accessToken = jwtUtils.generateToken(user.getEmail());
