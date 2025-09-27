@@ -61,7 +61,6 @@ public class AuthController {
         return ResponseEntity.ok("Email verified successfully.");
     }
 
-
     @PostMapping("/2fa/enable")
     public ResponseEntity<String> enable2FA(@RequestParam String userId) {
         authService.enableTwoFactor(userId);

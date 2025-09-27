@@ -181,7 +181,6 @@ public class AuthServiceImpl implements AuthService {
         userRepository.save(user);
     }
 
-
     @Override
     public void enableTwoFactor(String userId) {
         User user = userRepository.findById(Long.valueOf(userId))
