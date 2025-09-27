@@ -30,4 +30,5 @@ public class ClientController {
 }
 /*
 F: View Profile (company details visible to freelancers).
+we need to work on
  */
