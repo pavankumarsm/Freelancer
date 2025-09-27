@@ -7,11 +7,10 @@ import lombok.Data;
 @Data
 public class ResetPasswordDTO {
     @Email
-    @NotBlank
     private String email;
 
     @NotBlank
-    private String otpOrToken;
+    private String token;
 
     @NotBlank
     private String newPassword;

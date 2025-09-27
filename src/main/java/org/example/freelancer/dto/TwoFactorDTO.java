@@ -7,9 +7,12 @@ import lombok.Data;
 @Data
 public class TwoFactorDTO {
     @Email
-    @NotBlank
     private String email;
 
     @NotBlank
     private String otp;
+
+    // Added so verifyTwoFactor can return JWTs
+    private String accessToken;
+    private String refreshToken;
 }

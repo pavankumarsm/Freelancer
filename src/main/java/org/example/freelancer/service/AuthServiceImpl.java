@@ -119,22 +119,52 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void logout(String token) {
-
+        String email = jwtUtils.getEmailFromToken(token.replace("Bearer ", ""));
+        userRepository.findByEmail(email).ifPresent(user -> {
+            // If you maintain a blacklist, add token there
+        });
     }
 
     @Override
     public String refreshAccessToken(String refreshToken) {
-        return "";
+        if (!jwtUtils.validateToken(refreshToken)) {
+            throw new UnauthorizedException("Invalid refresh token");
+        }
+        String email = jwtUtils.getEmailFromToken(refreshToken);
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return jwtUtils.generateToken(user.getEmail());
     }
 
     @Override
     public void initiatePasswordReset(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
+        String resetToken = java.util.UUID.randomUUID().toString();
+        user.setResetToken(resetToken);
+        userRepository.save(user);
+
+        emailService.sendEmail(
+                user.getEmail(),
+                "Password Reset",
+                "Click to reset your password: http://localhost:8080/api/auth/reset-password?token=" + resetToken
+        );
     }
 
     @Override
     public void resetPassword(ResetPasswordDTO dto) {
+        User user = userRepository.findByEmail(dto.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
+        if (!dto.getToken().equals(user.getResetToken())) {
+            throw new UnauthorizedException("Invalid reset token");
+        }
+
+        user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
+        user.setResetToken(null);
+        userRepository.save(user);
     }
 
     @Override
