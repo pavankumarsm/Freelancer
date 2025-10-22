@@ -1,5 +1,6 @@
 package org.example.freelancer.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 import org.example.freelancer.dto.*;
@@ -13,6 +14,7 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
+@Tag(name = "User Management", description = "APIs for user registration, login, and profile operations")
 public class AuthController {
 
     private final AuthService authService;

@@ -1,5 +1,6 @@
 package org.example.freelancer.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.example.freelancer.constant.Role;
 import org.example.freelancer.dto.PasswordUpdateDTO;
@@ -17,6 +18,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
+@Tag(name = "Admin Operations", description = "Administrative endpoints for managing users and system data")
 public class AdminController {
 
     private final AdminService adminService;

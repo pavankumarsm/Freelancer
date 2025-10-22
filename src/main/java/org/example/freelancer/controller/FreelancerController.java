@@ -1,5 +1,6 @@
 package org.example.freelancer.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 import org.example.freelancer.dto.FreelancerProfileDTO;
@@ -13,6 +14,7 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/api/freelancers")
 @RequiredArgsConstructor
+@Tag(name = "Freelancer Management", description = "Manage freelancer profiles, skills, and ratings")
 public class FreelancerController {
 
     private final FreelancerService freelancerService;
