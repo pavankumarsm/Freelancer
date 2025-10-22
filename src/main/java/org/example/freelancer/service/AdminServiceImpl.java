@@ -1,6 +1,7 @@
 package org.example.freelancer.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.freelancer.constant.Role;
 import org.example.freelancer.dto.UserResponseDTO;
 import org.example.freelancer.exception.UnauthorizedException;
@@ -18,6 +19,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AdminServiceImpl implements AdminService {
 
     private final AdminRepository adminRepository;

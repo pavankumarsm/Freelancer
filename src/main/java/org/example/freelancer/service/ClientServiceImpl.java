@@ -1,6 +1,7 @@
 package org.example.freelancer.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.freelancer.dto.ClientProfileDTO;
 import org.example.freelancer.model.Client;
 import org.example.freelancer.model.User;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ClientServiceImpl implements ClientService {
 
     private final ClientRepository clientRepository;

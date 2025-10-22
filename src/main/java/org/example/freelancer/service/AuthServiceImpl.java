@@ -1,6 +1,7 @@
 package org.example.freelancer.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.freelancer.constant.Role;
 import org.example.freelancer.dto.*;
 import org.example.freelancer.exception.UnauthorizedException;
@@ -18,6 +19,7 @@ import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthServiceImpl implements AuthService {
 
     private final AdminRepository adminRepository;
