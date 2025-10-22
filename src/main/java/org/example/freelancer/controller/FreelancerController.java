@@ -1,29 +1,31 @@
 package org.example.freelancer.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-
 import org.example.freelancer.dto.FreelancerProfileDTO;
 import org.example.freelancer.model.User;
 import org.example.freelancer.service.FreelancerService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/freelancers")
 @RequiredArgsConstructor
-@Tag(name = "Freelancer Management", description = "Manage freelancer profiles, skills, and ratings")
+@Tag(name = "Freelancer Management", description = "Manage freelancer profiles, skills, visibility, and account status")
 public class FreelancerController {
 
     private final FreelancerService freelancerService;
 
+    @Operation(summary = "Update Freelancer Profile", description = "Update freelancer profile details like skills, experience, and bio")
     @PutMapping("/{freelancerId}/profile")
     public ResponseEntity<User> updateProfile(@PathVariable Long freelancerId,
                                               @RequestBody @Valid FreelancerProfileDTO profileDTO) {
         return ResponseEntity.ok(freelancerService.updateProfile(freelancerId, profileDTO));
     }
+
+    @Operation(summary = "Deactivate Freelancer Account", description = "Deactivate a freelancer's account (sets isActive=false)")
     @PutMapping("/{freelancerId}/deactivate")
     public ResponseEntity<String> deactivateAccount(@PathVariable Long freelancerId) {
         freelancerService.deactivateAccount(freelancerId);
